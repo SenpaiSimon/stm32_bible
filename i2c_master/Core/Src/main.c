@@ -22,7 +22,6 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include <stdint.h>
-#include <string.h>
 
 /* USER CODE END Includes */
 
@@ -35,6 +34,7 @@
 /* USER CODE BEGIN PD */
 #define DEVICE_ADDRESS 0x80 << 1
 #define REGISTER_TO_READ 0x50
+#define REGISTER_TO_WRITE 0x60
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -110,6 +110,10 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
 
+  /********************************************
+   * Reading a register
+   ********************************************/
+
    /********************************************
     * first possibility in one line of code
     ********************************************/
@@ -137,9 +141,45 @@ int main(void)
 		} else {
 			// actions to take when communication was success
 		}
-	} else {
+	 } else {
 		// actions to take when first communication was failure
-	}
+	 }
+
+
+
+
+     /********************************************
+      * Reading a register
+      ********************************************/
+
+     /********************************************
+	  * first possibility in one line of code
+	  ********************************************/
+	  buf[0] = 0x22;
+	  status = HAL_I2C_Mem_Write(&hi2c1, DEVICE_ADDRESS, REGISTER_TO_WRITE, 1, buf, 1, 100);
+
+	  if(status != HAL_OK) {
+		  // actions to take when communication was failure
+	  }
+
+
+
+	 /********************************************
+	  * second possibility in two steps
+	  ********************************************/
+	  buf[0] = REGISTER_TO_WRITE;
+	  status = HAL_I2C_Master_Transmit(&hi2c1, DEVICE_ADDRESS, buf, 1, 100);
+
+	  if(status == HAL_OK) {
+		buf[0] = 0x22;
+		status = HAL_I2C_Master_Transmit(&hi2c1, DEVICE_ADDRESS, buf, 1, 100);
+
+		if(status != HAL_OK) {
+			// actions to take when second communication was failure
+		}
+	  } else {
+	    // actions to take when first communication was failure
+	  }
   }
   /* USER CODE END 3 */
 }
