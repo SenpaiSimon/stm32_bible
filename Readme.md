@@ -12,4 +12,7 @@ Including runnable examples for _STM32CubeIDE_.
 ### Contents
 
 - Transmission Protocolls
-    - `i2c_master` ([code](./i2c_master/), [wiki](https://github.com/SenpaiSimon/stm32_bible/wiki/i2c))
+    - `i2c_master` ([code](./transmission_protocolls/i2c_master/), [wiki](https://github.com/SenpaiSimon/stm32_bible/wiki/i2c))
+
+- Tools
+    - `dac_sine_generator` ([code](./tools/dac_sine_generator/), [wiki](https://github.com/SenpaiSimon/stm32_bible/wiki/dac_sine_generator))
