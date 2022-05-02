@@ -53,6 +53,10 @@ UART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN PV */
 
+//Make lookup table global
+uint32_t sample_count = 1000;
+uint32_t lookup_table[sample_count];
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -77,7 +81,7 @@ void sineGenerator(uint32_t* table, uint32_t tableSize) {
 	double steps = ((double)2*M_PI)/(double)tableSize;
 	double xValue = 0;
 	for(int i = 0; i < tableSize; i++, xValue += steps) {
-		table[i] = (uint32_t)(sin(xValue) * 2048.0) + 2048;
+		table[i] = (uint32_t)(sin(xValue) * 2048.0) + 2047;
 	}
 }
 
@@ -136,15 +140,13 @@ void printSine(uint32_t* table, uint32_t length) {
  * resolution: How many steps are made between 0 .. 1 for exmaple for sine generation
  ****************************************************************************/
 void waveOutput(DAC_HandleTypeDef *hdac, uint32_t Channel, TIM_HandleTypeDef *tim, uint32_t frequency, double chipFreq, uint32_t sampleCount) {
-	uint32_t lookup_table[sampleCount];
-
 	sineGenerator(lookup_table, sampleCount);
 	#ifdef DEBUG
 		printSine(lookup_table, sampleCount);
 	#endif
 	setupTimer(frequency, tim, chipFreq, sampleCount);
 
-	HAL_DAC_Start_DMA(hdac, Channel, (uint32_t*)lookup_table, sampleCount-1, DAC_ALIGN_12B_R);
+	HAL_DAC_Start_DMA(hdac, Channel, (uint32_t*)lookup_table, sampleCount, DAC_ALIGN_12B_R);
 	HAL_TIM_Base_Start(tim);
 }
 /* USER CODE END 0 */
@@ -184,9 +186,8 @@ int main(void)
   /* USER CODE BEGIN 2 */
   uint32_t chipFreq = 32e6;
   uint32_t freq = 1000;
-  uint32_t samples = 1000;
 
-  waveOutput(&hdac, DAC1_CHANNEL_1, &htim2, freq, chipFreq, samples);
+  waveOutput(&hdac, DAC1_CHANNEL_1, &htim2, freq, chipFreq, sample_count);
 
   /* USER CODE END 2 */
 
